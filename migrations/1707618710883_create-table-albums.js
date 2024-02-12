@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 
 exports.up = (pgm) => {
-  pgm.dropColumn("albums", "cover_url");
+  pgm.dropColumn("albums");
   pgm.createTable("albums", {
     id: {
       type: "VARCHAR(50)",
