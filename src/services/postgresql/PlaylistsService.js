@@ -23,9 +23,7 @@ class PlaylistsService {
         }
 
         if (result.rows[0].owner !== owner) {
-            throw new AuthorizationError(
-                'Anda tidak mempunyai hak akses pada playlist ini!',
-            );
+            throw new AuthorizationError('Anda tidak mempunyai hak akses pada playlist ini!');
         }
     }
 
@@ -38,10 +36,7 @@ class PlaylistsService {
             }
 
             try {
-                await this._collaborationsService.verifyCollaborator(
-                    playlistId,
-                    userId,
-                );
+                await this._collaborationsService.verifyCollaborator(playlistId, userId);
             } catch {
                 throw error;
             }

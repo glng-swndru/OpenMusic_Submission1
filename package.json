@@ -15,15 +15,16 @@
   "dependencies": {
     "@hapi/hapi": "^21.2.0",
     "@hapi/inert": "^7.1.0",
-    "@hapi/jwt": "^3.2.0",
+    "@hapi/jwt": "^3.1.0",
+    "amqplib": "^0.10.3",
     "auto-bind": "^4.0.0",
-    "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.2",
-    "joi": "^17.12.1",
-    "nanoid": "^3.3.7",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "joi": "^17.7.0",
+    "nanoid": "^3.3.4",
     "node-pg-migrate": "^6.2.2",
-    "path": "^0.12.7",
-    "pg": "^8.11.3"
+    "pg": "^8.9.0",
+    "redis": "^4.6.5"
   },
   "devDependencies": {
     "eslint": "^8.56.0",

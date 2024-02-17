@@ -30,16 +30,7 @@ class PlaylistsSongsActivitiesService {
         const query = {
             text: `INSERT INTO playlist_song_activities (id, playlist_id, song_id, song_title, user_id, username, action, time)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-            values: [
-                activitiesId,
-                playlistId,
-                songId,
-                songTitle,
-                userId,
-                username,
-                'add',
-                time,
-            ],
+            values: [activitiesId, playlistId, songId, songTitle, userId, username, 'add', time],
         };
 
         await this._pool.query(query);
@@ -68,16 +59,7 @@ class PlaylistsSongsActivitiesService {
         const query = {
             text: `INSERT INTO playlist_song_activities (id, playlist_id, song_id, song_title, user_id, username, action, time)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-            values: [
-                activitiesId,
-                playlistId,
-                songId,
-                songTitle,
-                userId,
-                username,
-                'delete',
-                time,
-            ],
+            values: [activitiesId, playlistId, songId, songTitle, userId, username, 'delete', time],
         };
 
         await this._pool.query(query);

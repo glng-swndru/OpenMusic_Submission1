@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 const AlbumsHandler = require('./handler');
 const routes = require('./routes');
 

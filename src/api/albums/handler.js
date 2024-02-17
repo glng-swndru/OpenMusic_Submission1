@@ -1,5 +1,5 @@
-/* eslint-disable linebreak-style */
 const autoBind = require('auto-bind');
+const config = require('../../utils/config/config');
 
 class AlbumsHandler {
     constructor(
@@ -20,6 +20,7 @@ class AlbumsHandler {
         this.getAlbumByIdHandler = this.getAlbumByIdHandler.bind(this);
         this.putAlbumByIdHandler = this.putAlbumByIdHandler.bind(this);
         this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
+
         autoBind(this);
     }
 
@@ -51,79 +52,24 @@ class AlbumsHandler {
         };
     }
 
-    async getAlbumByIdHandler(request, h) {
-        try {
-            const { id } = request.params;
+    async getAlbumByIdHandler(request) {
+        const { id } = request.params;
 
-            const album = await this._albumsService.getAlbumById(id);
+        const album = await this._albumsService.getAlbumById(id);
+        album.songs = await this._songsService.getSongByAlbumId(id);
 
-            if (!album) {
-                console.error(`Album not found for ID: ${id}`);
-                console.log('Preparing direct object for 404');
-
-                const newResponse = h?.response({
-                    status: 'fail',
-                    message: 'Album tidak ditemukan',
-                });
-
-                // Gunakan optional chaining untuk memeriksa apakah newResponse ada
-                if (newResponse) {
-                    console.log('Preparing h.response for 404');
-                    newResponse.code(404);
-                    return newResponse;
-                }
-                console.log('Preparing direct object for 404');
-                return {
-                    status: 'fail',
-                    message: 'Album tidak ditemukan',
-                };
-            }
-
-            console.log(`Album found for ID: ${id}`);
-            album.songs = await this._songsService.getSongByAlbumId(id);
-
-            return {
-                status: 'success',
-                data: {
-                    album,
-                },
-            };
-        } catch (error) {
-            console.error(`Error in getAlbumByIdHandler: ${error.message}`);
-
-            const errorResponse = h?.response({
-                status: 'error',
-                message: 'Gagal mengambil detail album',
-            });
-
-            // Gunakan optional chaining untuk memeriksa apakah errorResponse ada
-            if (errorResponse) {
-                console.log('Preparing h.response for 500');
-                return errorResponse.code(500);
-            }
-            console.log('Preparing direct object for 500');
-            return {
-                status: 'error',
-                message: 'Gagal mengambil detail album',
-            };
-        }
+        return {
+            status: 'success',
+            data: {
+                album,
+            },
+        };
     }
 
     async putAlbumByIdHandler(request, h) {
         this._albumsValidator.validateAlbumsPayload(request.payload);
 
         const { id } = request.params;
-        const album = await this._albumsService.getAlbumById(id);
-
-        if (!album) {
-            return h
-                .response({
-                    status: 'fail',
-                    message: 'Album tidak ditemukan',
-                })
-                .code(404);
-        }
-
         await this._albumsService.editAlbumById(id, request.payload);
 
         return h.response({
@@ -134,39 +80,15 @@ class AlbumsHandler {
 
     async deleteAlbumByIdHandler(request, h) {
         const { id } = request.params;
-        const album = await this._albumsService.getAlbumById(id);
 
-        if (!album) {
-            console.log(`Album not found for ID: ${id}. Returning 404 response.`);
-            return h
-                .response({
-                    status: 'fail',
-                    message: 'Album tidak ditemukan',
-                })
-                .code(404);
-        }
+        await this._albumsService.deleteAlbumById(id);
 
-        try {
-            console.log(`Deleting album for ID: ${id}`);
-            await this._albumsService.deleteAlbumById(id);
+        const response = h.response({
+            status: 'success',
+            message: 'Album berhasil dihapus',
+        });
 
-            console.log(
-                `Album deleted successfully for ID: ${id}. Returning 200 response.`,
-            );
-            return h.response({
-                status: 'success',
-                message: 'Album berhasil dihapus',
-            });
-        } catch (error) {
-            console.error(`Error in deleteAlbumByIdHandler: ${error.message}`);
-
-            return h
-                .response({
-                    status: 'error',
-                    message: 'Gagal menghapus album',
-                })
-                .code(500);
-        }
+        return response;
     }
 
     async postUploadCoverHandler(request, h) {
@@ -178,7 +100,7 @@ class AlbumsHandler {
         this._uploadsValidator.validateImageHeaders(cover.hapi.headers);
 
         const filename = await this._storageService.writeFile(cover, cover.hapi);
-        const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/albums/covers/${filename}`;
+        const fileLocation = `http://${config.app.host}:${config.app.port}/albums/covers/${filename}`;
 
         await this._albumsService.editAlbumToAddCoverById(id, fileLocation);
 

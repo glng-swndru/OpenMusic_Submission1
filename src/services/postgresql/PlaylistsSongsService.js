@@ -89,9 +89,7 @@ class PlaylistsSongsService {
         const result = await this._pool.query(query);
 
         if (!result.rowCount) {
-            throw new InvariantError(
-                'Playlist song gagal dihapus, playlist id dan song id tidak ditemukan',
-            );
+            throw new InvariantError('Playlist song gagal dihapus, playlist id dan song id tidak ditemukan');
         }
     }
 }
