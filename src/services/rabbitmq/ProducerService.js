@@ -1,10 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const amqp = require('amqplib');
-const config = require('../../utils/config/config');
 
 const ProducerService = {
     sendMessage: async (queue, message) => {
-        const connection = await amqp.connect(config.rabbitMq.host);
+        const connection = await amqp.connect(process.env.RABBITMQ_SERVER);
         const channel = await connection.createChannel();
 
         await channel.assertQueue(queue, {

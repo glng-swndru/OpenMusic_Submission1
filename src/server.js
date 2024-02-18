@@ -4,7 +4,6 @@ const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 const Inert = require('@hapi/inert');
 const path = require('path');
-const config = require('./utils/config/config');
 const ClientError = require('./exceptions/ClientError');
 
 // Albums
@@ -67,8 +66,8 @@ const init = async () => {
     );
 
     const server = Hapi.server({
-        host: config.app.host,
-        port: config.app.port,
+        host: process.env.HOST,
+        port: process.env.PORT,
         routes: {
             cors: {
                 origin: ['*'],
